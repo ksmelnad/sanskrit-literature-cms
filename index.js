@@ -1,9 +1,7 @@
 const express = require("express");
-const dotenv = require("dotenv");
-
 const app = express();
 const path = require("path");
-dotenv.config({ path: "./config/.env" });
+require("dotenv").config();
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
@@ -20,6 +18,10 @@ app.use(
 );
 
 app.set("trust proxy", 1);
+
+app.get("/", (req, res) => {
+  res.send("Server is running !");
+});
 
 app.use(
   session({
@@ -66,8 +68,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL:
-        "https://sanskrit-literature-cms.herokuapp.com/auth/google/callback",
+      callbackURL: "/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       (async function () {
@@ -95,13 +96,15 @@ passport.use(
 );
 
 app.get(
-  "https://sanskrit-literature-cms.herokuapp.com/auth/google",
+  "/auth/google",
   passport.authenticate("google", { scope: ["profile"] })
 );
 
 app.get(
-  "https://sanskrit-literature-cms.herokuapp.com/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "https://sanskrit-literature-cms.herokuapp.com",
+  }),
   function (req, res) {
     // Successful authentication, redirect home.
     res.redirect("https://sanskrit-literature-cms.herokuapp.com/dashboard");
@@ -135,11 +138,11 @@ if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));
   });
-} else {
-  app.get("/", (req, res) => {
-    res.send("Server is running!");
-  });
 }
+// else {
+//   app.get("/", (req, res) => {
+//     res.send("Server is running!");
+//   });
 
 app.listen(process.env.PORT || 5000, () => {
   console.log("Server started!");

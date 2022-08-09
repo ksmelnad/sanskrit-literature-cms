@@ -23,7 +23,8 @@
     "passport-google-oauth20": "^2.0.0"
   },
   "engines": {
-    "node": "v16.x"
+    "node": "v16.x",
+    "npm": "8.11.x"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
