@@ -131,7 +131,7 @@ app.get("/auth/logout", (req, res) => {
 app.use(require("./routes/text"));
 
 // Serve static assets in production
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "development") {
   // Set static folder
   app.use(express.static(path.join("/client/build")));
 
